@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -19,25 +20,37 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService ;
     @GetMapping ("/view")
-    public ModelAndView findAll (){
+    public ModelAndView findAll(){
         List <Customer> customerList = customerService.findAll();
 
-        ModelAndView modelAndView = new ModelAndView("/customer/view");
+        ModelAndView modelAndView = new ModelAndView("customer/view");
         modelAndView.addObject("customers", customerList);
         return modelAndView;
     }
     @GetMapping("/create")//
     public String create(Model model) {
-        model.addAttribute("customers", new Customer());
+        model.addAttribute("customer", new Customer());
         return "/customer/create";
     }
     @PostMapping("/save")
     //handle method save()
-    public ModelAndView save(Customer customer, RedirectAttributes redirect) {
+    public String save(Customer customer, RedirectAttributes redirect) {
         customer.setId((int)(Math.random() * 10000));
         customerService.save(customer);
-        redirect.addFlashAttribute("success", "Saved customer successfully!");
-        return findAll ();
+        redirect.addFlashAttribute("message", "Saved customer successfully!");
+        return "redirect:/customer/create";
+    }
+    @GetMapping("{id}/edit")
+    public String edit(@PathVariable int id, Model model) {
+        model.addAttribute("customer", customerService.findById(id-1));
+        return "/customer/edit";
+    }
+
+    @PostMapping("/update")
+    public String update(Customer customer, RedirectAttributes redirect) {
+        customerService.update(customer.getId(), customer);
+        redirect.addFlashAttribute("message", "Modified customer successfully!");
+        return "redirect:/customer/edit";
     }
 
 }

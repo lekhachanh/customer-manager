@@ -9,7 +9,7 @@ public interface GeneralService<T> {
 
     Customer findById(int id);
 
-    void update(int id, Customer customer);
+    void update(int id, T t);
 
     void remove(int id);
 }
