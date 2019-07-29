@@ -42,15 +42,35 @@ public class CustomerController {
     }
     @GetMapping("{id}/edit")
     public String edit(@PathVariable int id, Model model) {
-        model.addAttribute("customer", customerService.findById(id-1));
+        model.addAttribute("customer", customerService.findById(id));
         return "/customer/edit";
     }
 
     @PostMapping("/update")
-    public String update(Customer customer, RedirectAttributes redirect) {
-        customerService.update(customer.getId(), customer);
-        redirect.addFlashAttribute("message", "Modified customer successfully!");
-        return "redirect:/customer/edit";
+    public ModelAndView update(Customer customer) {
+        ModelAndView modelAndView = new ModelAndView("/customer/edit");
+        customerService.update(customer.getId()-1, customer);
+        modelAndView.addObject("message", "Modified customer successfully!");
+        return modelAndView;
+    }
+    @GetMapping("/{id}/delete")
+    public String delete(@PathVariable int id, Model model) {
+        model.addAttribute("customer", customerService.findById(id));
+        return "/customer/delete";
+    }
+    @PostMapping("/delete")
+    public ModelAndView delete(Customer customer) {
+        ModelAndView modelAndView = new ModelAndView("/customer/delete");
+        customerService.remove(customer.getId());
+        modelAndView.addObject("message", "Removed customer successfully!");
+        return modelAndView;
     }
 
+    @GetMapping("/{id}/view")
+    public ModelAndView view(@PathVariable int id) {
+        ModelAndView modelAndView = new ModelAndView("customer/index");
+        modelAndView.addObject("customer", customerService.findById(id));
+        modelAndView.addObject("message","show list customer");
+        return modelAndView;
+    }
 }
