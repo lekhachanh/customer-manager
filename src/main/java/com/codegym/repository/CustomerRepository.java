@@ -21,4 +21,24 @@ public class CustomerRepository implements GeneralRepository <Customer>{
     public List<Customer> findAll() {
         return customerList;
     }
+
+    @Override
+    public void save(Customer customer) {
+        customerList.add(customer);
+    }
+
+    @Override
+    public Customer findById(int id) {
+        return customerList.get(id);
+    }
+
+    @Override
+    public void update(int id, Customer customer) {
+        customerList.set(id, customer);
+    }
+
+    @Override
+    public void remove(int id) {
+        customerList.remove(id);
+    }
 }
